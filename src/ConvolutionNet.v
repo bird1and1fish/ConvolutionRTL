@@ -10,6 +10,7 @@ module ConvolutionNetTop (
     wire layer_2_read_en;
     wire [7:0] layer_1_conv;
     wire layer_1_write_complete;
+    wire layer_2_relu_begin;
     wire [9:0] conv_ram_write_addr;
     wire [9:0] conv_ram_read_addr;
     wire [7:0] layer_2_max_tmp;
@@ -45,13 +46,14 @@ module ConvolutionNetTop (
         .wr_addr(conv_ram_write_addr),
         .rd_addr(conv_ram_read_addr),
         .d_out(layer_1_conv),
-        .layer_1_write_complete(layer_1_write_complete)
+        .layer_1_write_complete(layer_1_write_complete),
+        .layer_2_relu_begin(layer_2_relu_begin)
     );
 
     m_max_relu_2 m_max_relu_2(
         .clk(clk),
         .rst(rst),
-        .layer_1_write_complete(layer_1_write_complete),
+        .layer_2_relu_begin(layer_2_relu_begin),
         .d_in(layer_1_conv),
         .rd_en(layer_2_read_en),
         .ram_read_addr(conv_ram_read_addr),

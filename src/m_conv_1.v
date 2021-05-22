@@ -5,7 +5,7 @@ module m_conv_1(
     input start,
     input layer_0_ready,
     input layer_1_write_complete,
-    output reg [9:0] ram_write_addr = 10'd0,
+    output reg [6:0] ram_write_addr = 10'd0,
     output reg [7:0] d_out,
     // layer_1_ready置1下一拍时d_out有效
     output layer_1_ready
@@ -161,19 +161,19 @@ module m_conv_1(
     end
     assign layer_1_ready = ((out_count >= out_ready) && (out_count <= out_ready + img_raw - kernel_size)) && (line_count < img_line -kernel_size + 1'b1);
 
-    // 设置写地址
-    parameter layer_1_output_num = 10'd676;
+    // 设置写地址，乒乓缓存大小为4x26
+    parameter pingpong_size = 7'd104;
     always @(posedge clk) begin
         if(!rst) begin
-            ram_write_addr <= 10'd0;
+            ram_write_addr <= 7'd0;
         end
         else begin
             if(layer_1_ready) begin
-                if(ram_write_addr < layer_1_output_num - 1) begin
-                    ram_write_addr <= ram_write_addr + 10'd1;
+                if(ram_write_addr < pingpong_size - 1) begin
+                    ram_write_addr <= ram_write_addr + 7'd1;
                 end
                 else begin
-                    ram_write_addr <= 10'd0;
+                    ram_write_addr <= 7'd0;
                 end
             end
         end
